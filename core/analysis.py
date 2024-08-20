@@ -1,8 +1,8 @@
 import pandas as pd
 
-def calculate_moving_averages(prices):
-    short_sma = prices.rolling(window=10).mean()  # Kısa vadeli SMA için pencereyi 10 gün yapalım
-    long_sma = prices.rolling(window=20).mean()   # Uzun vadeli SMA için pencereyi 20 gün yapalım
+def calculate_moving_averages(prices, short_window=10, long_window=20):
+    short_sma = prices.rolling(window=short_window).mean()
+    long_sma = prices.rolling(window=long_window).mean()
     return short_sma, long_sma
 
 def calculate_rsi(prices, window=14):
@@ -51,10 +51,3 @@ def calculate_take_profit_and_stop_loss(last_price, take_profit_percentage=5, st
     take_profit = last_price * (1 + take_profit_percentage / 100)
     stop_loss = last_price * (1 - stop_loss_percentage / 100)
     return take_profit, stop_loss
-
-def calculate_bollinger_bands(prices, window=20):
-    sma = prices.rolling(window=window).mean()
-    std = prices.rolling(window=window).std()
-    upper_band = sma + (std * 2)
-    lower_band = sma - (std * 2)
-    return upper_band, lower_band
