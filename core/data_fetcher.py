@@ -10,11 +10,17 @@ def fetch_stock_data(ticker, period='1mo', interval='1d'):
     close_prices = stock_data['Close']
     return close_prices
 
+def fetch_historical_data(ticker, start_date, end_date):
+    # Belirli bir tarih aralığındaki verileri çekme
+    stock_data = yf.download(ticker, start=start_date, end=end_date)
+    return stock_data
+
 def analyze_stock(ticker):
     data = fetch_stock_data(ticker)
 
     # Eğitilmiş modeli yükleyelim
-    with open('../models/random_forest_model.pkl', 'rb') as model_file:
+    model_path = os.path.join(os.path.dirname(__file__), '../models/random_forest_model.pkl')
+    with open(model_path, 'rb') as model_file:
         model = pickle.load(model_file)
 
     # İndikatör hesaplamaları burada yapılacak
@@ -52,21 +58,3 @@ def analyze_stocks(tickers):
             print(f"Veri çekilirken hata oluştu: {ticker} - {e}")
 
     return buy_signals
-
-# İndikatör hesaplama fonksiyonlarını buraya ekleyebilirsiniz.
-def calculate_rsi(data, window=14):
-    delta = data.diff(1)
-    gain = delta.where(delta > 0, 0)
-    loss = -delta.where(delta < 0, 0)
-    avg_gain = gain.rolling(window=window).mean()
-    avg_loss = loss.rolling(window=window).mean()
-    rs = avg_gain / avg_loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
-
-# Diğer indikatör fonksiyonları da buraya eklenebilir...
-
-if __name__ == "__main__":
-    tickers = ["ASELS.IS", "GARAN.IS", "THYAO.IS", "SASA.IS", "BIMAS.IS"]  # Örnek hisse listesi
-    buy_opportunities = analyze_stocks(tickers)
-    print("Alım fırsatı sunan hisseler:", buy_opportunities)

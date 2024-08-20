@@ -51,3 +51,10 @@ def calculate_take_profit_and_stop_loss(last_price, take_profit_percentage=5, st
     take_profit = last_price * (1 + take_profit_percentage / 100)
     stop_loss = last_price * (1 - stop_loss_percentage / 100)
     return take_profit, stop_loss
+
+def calculate_bollinger_bands(prices, window=20):
+    sma = prices.rolling(window=window).mean()
+    std = prices.rolling(window=window).std()
+    upper_band = sma + (std * 2)
+    lower_band = sma - (std * 2)
+    return upper_band, lower_band

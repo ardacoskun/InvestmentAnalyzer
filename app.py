@@ -19,6 +19,7 @@ if not os.path.exists(model_path):
 else:
     with open(model_path, 'rb') as model_file:
         model = pickle.load(model_file)
+        print(f"Model başarıyla yüklendi: {model_path}")
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
