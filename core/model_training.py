@@ -10,9 +10,13 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import pickle
 from core.data_fetcher import fetch_stock_data
-from core.analysis import calculate_rsi, calculate_macd, calculate_stochastic, calculate_momentum, calculate_moving_averages, calculate_bollinger_bands, calculate_atr
+from core.analysis import (
+    calculate_rsi, calculate_macd, calculate_stochastic, 
+    calculate_momentum, calculate_moving_averages, 
+    calculate_bollinger_bands, calculate_atr
+)
 
-def prepare_training_data():
+def regenerate_training_data():
     tickers = ["ASELS.IS", "GARAN.IS", "THYAO.IS", "SASA.IS", "BIMAS.IS"]
     start_date = "2018-01-01"
     end_date = "2023-01-01"
@@ -45,10 +49,12 @@ def prepare_training_data():
         data['lower_band'] = lower_band
         data['atr'] = atr
 
-        # Daha dinamik bir etiketleme
-        data['label'] = data.apply(lambda row: 'buy' if row['rsi'] < 40 and row['macd'] > 0 and row['short_sma'] > row['long_sma'] else 'sell' if row['rsi'] > 60 and row['macd'] < 0 else 'hold', axis=1)
+        # Dinamik etiketleme
+        data['label'] = data.apply(lambda row: 'buy' if row['rsi'] < 40 and row['macd'] > 0 and row['short_sma'] > row['long_sma'] 
+                                   else 'sell' if row['rsi'] > 60 and row['macd'] < 0 
+                                   else 'hold', axis=1)
 
-        # DataFrame'i birleştirelim
+        # Veriyi birleştirelim
         all_data.append(data[['rsi', 'macd', 'stochastic', 'momentum', 'short_sma', 'long_sma', 'upper_band', 'lower_band', 'atr', 'label']])
 
     # Tüm verileri tek bir DataFrame'de birleştirelim
@@ -98,5 +104,5 @@ def train_and_save_model():
     print(f"Model başarıyla kaydedildi: {file_path}")
 
 if __name__ == "__main__":
-    prepare_training_data()  # Gerçek verileri çekme işlemi
+    regenerate_training_data()  # Gerçek verileri çekme işlemi
     train_and_save_model()   # Modeli eğitme ve kaydetme

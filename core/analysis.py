@@ -47,7 +47,10 @@ def calculate_momentum(prices, window=10):
     momentum = prices.diff(window)
     return momentum
 
-def calculate_take_profit_and_stop_loss(last_price, take_profit_percentage=5, stop_loss_percentage=3):
-    take_profit = last_price * (1 + take_profit_percentage / 100)
-    stop_loss = last_price * (1 - stop_loss_percentage / 100)
-    return take_profit, stop_loss
+def calculate_buy_or_sell_signal(rsi, macd, stochastic, short_sma, long_sma):
+    if rsi < 40 and macd > 0 and short_sma > long_sma:
+        return "buy"
+    elif rsi > 60 and macd < 0 and short_sma < long_sma:
+        return "sell"
+    else:
+        return "hold"
